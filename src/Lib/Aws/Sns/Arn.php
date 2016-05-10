@@ -15,7 +15,7 @@ namespace Lib\Aws\Sns;
  *
  * @link http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
  */
-class Arn 
+class Arn
 {
     public $base;
 
@@ -34,7 +34,7 @@ class Arn
 
     public function __construct($arn = '')
     {
-        $arn = (string) $arn;
+        $arn = (string)$arn;
 
         $this->base = $arn;
         $this->extract($arn);

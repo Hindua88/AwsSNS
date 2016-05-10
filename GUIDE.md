@@ -10,7 +10,8 @@ Requirment: http://docs.aws.amazon.com/aws-sdk-php/v2/guide/requirements.html
 +) PHP 5.3.3+ compiled with the cURL, JSON, and XML extensions
 +) A recent version of cURL 7.16.2+ compiled with OpenSSL and zlib
 +) Install: http://docs.aws.amazon.com/aws-sdk-php/v2/guide/installation.html
-- Khuyến khích sử dụng composer để cài đặt. Sử dụng composer:
+- Cài đặt: Khuyến khích sử dụng composer để cài đặt (có thể sử dụng file zip).
+Sử dụng composer:
 B1. Add vào file composer.json ở thư mục root của project nếu chưa có thì tạo:
     "require": {
         "aws/aws-sdk-php": "2.*",

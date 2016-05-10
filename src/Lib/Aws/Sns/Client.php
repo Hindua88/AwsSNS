@@ -13,12 +13,9 @@ class Client
 {
     public static function build()
     {
-        try
-        {
+        try {
             $Client = SnsClient::factory(\Lib\Aws\Sns\Configure::read('app'));
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
 

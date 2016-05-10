@@ -1,5 +1,6 @@
 <?php
 namespace Lib\Aws\Sns;
+
 use Guzzle\Service\Exception\CommandTransferException;
 
 class Api
@@ -7,21 +8,21 @@ class Api
     protected $Client;
     protected $api;
     protected $modelName;
-    protected $params;    
+    protected $params;
 
     protected static $apiModelName = [
-        'listPlatformApplications'           => 'PlatformApplications',
+        'listPlatformApplications' => 'PlatformApplications',
         'listEndpointsByPlatformApplication' => 'Endpoints',
-        'createPlatformEndpoint'             => 'EndpointArn',
-        'getEndpointAttributes'              => 'Attributes',
-        'setEndpointAttributes'              => '',
-        'deleteEndpoint'                     => 'EndpointArn',
-        'createTopic'                        => 'TopicArn',
-        'listTopics'                         => 'Topics',
-        'subscribe'                          => 'SubscriptionArn',
-        'getPlatformApplicationAttributes'   => 'Attributes',
-        'listSubscriptionsByTopic'           => 'Subscriptions',
-        'publish'                            => 'MessageId',
+        'createPlatformEndpoint' => 'EndpointArn',
+        'getEndpointAttributes' => 'Attributes',
+        'setEndpointAttributes' => '',
+        'deleteEndpoint' => 'EndpointArn',
+        'createTopic' => 'TopicArn',
+        'listTopics' => 'Topics',
+        'subscribe' => 'SubscriptionArn',
+        'getPlatformApplicationAttributes' => 'Attributes',
+        'listSubscriptionsByTopic' => 'Subscriptions',
+        'publish' => 'MessageId',
     ];
 
     public function __construct($api, $params = array())
@@ -30,15 +31,15 @@ class Api
             throw new \Exception('Call unknown API.');
         }
 
-        $this->api       = $api;
+        $this->api = $api;
         $this->modelName = self::$apiModelName[$api];
-        $this->params    = (array) $params;
-        $this->Client    = Client::build();
+        $this->params = (array)$params;
+        $this->Client = Client::build();
     }
 
     public function addParam($param = array())
     {
-        array_push($this->params, (array) $param);
+        array_push($this->params, (array)$param);
     }
 
     /**
@@ -50,8 +51,8 @@ class Api
         // Don't have parameters or Just have only one parameters bundle 
         if (empty($this->params) || count($this->params) == 1) {
             return $this->direct();
-        
-        // Have many parameters bundle
+
+            // Have many parameters bundle
         } else {
             return $this->parallel();
         }
@@ -67,20 +68,19 @@ class Api
 
         $results = array();
 
-        try
-        {
+        try {
             $result = $this->Client->{$this->api}($params);
 
             if (isset($result[$this->modelName])) {
                 $results = $result[$this->modelName];
-            } else if ($result instanceof \Guzzle\Service\Resource\Model) {
-                $results = 'Success.';
             } else {
-                $results = 'Unknown error.';
+                if ($result instanceof \Guzzle\Service\Resource\Model) {
+                    $results = 'Success.';
+                } else {
+                    $results = 'Unknown error.';
+                }
             }
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             $results = $e->getMessage();
         }
 
@@ -108,8 +108,7 @@ class Api
 
         $results = array();
 
-        try
-        {
+        try {
             $succeedCommands = $this->Client->execute($commands);
 
             foreach ($succeedCommands as $command) {
@@ -118,15 +117,15 @@ class Api
 
                 if (isset($result[$this->modelName])) {
                     $results[$index] = $result[$this->modelName];
-                } else if ($result instanceof \Guzzle\Service\Resource\Model) {
-                    $results[$index] = 'Success.';
                 } else {
-                    $results[$index] = 'Unknown error.';
+                    if ($result instanceof \Guzzle\Service\Resource\Model) {
+                        $results[$index] = 'Success.';
+                    } else {
+                        $results[$index] = 'Unknown error.';
+                    }
                 }
             }
-        } 
-        catch (CommandTransferException $e)
-        {
+        } catch (CommandTransferException $e) {
             $succeedCommands = $e->getSuccessfulCommands();
             foreach ($succeedCommands as $command) {
                 $index = array_search($command, $commands);
@@ -134,13 +133,14 @@ class Api
 
                 if (isset($result[$this->modelName])) {
                     $results[$index] = $result[$this->modelName];
-                } else if ($result instanceof \Guzzle\Service\Resource\Model) {
-                    $results[$index] = 'Success.';
                 } else {
-                    $results[$index] = 'Unknown error.';
+                    if ($result instanceof \Guzzle\Service\Resource\Model) {
+                        $results[$index] = 'Success.';
+                    } else {
+                        $results[$index] = 'Unknown error.';
+                    }
                 }
             }
-
 
             foreach ($e->getFailedCommands() as $command) {
                 $index = array_search($command, $commands);

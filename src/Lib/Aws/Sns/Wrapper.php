@@ -23,7 +23,7 @@ class Wrapper
     /**
      * listEndpointsByPlatformApplication
      *
-     * @link 
+     * @link
      * http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html#_listEndpointsByPlatformApplication
      */
     public function listEndpointsByPlatformApplication($platformApplicationArn = '')
@@ -55,8 +55,7 @@ class Wrapper
         $listEndpointsByPlatformApplication = $Api->execute();
 
         $results = $listPlatformApplications;
-        foreach ($listEndpointsByPlatformApplication as $key => $endpoints)
-        {
+        foreach ($listEndpointsByPlatformApplication as $key => $endpoints) {
             $results[$key]['Endpoints'] = $endpoints;
         }
 
@@ -66,7 +65,7 @@ class Wrapper
     /**
      * getPlatformApplicationAttributes
      *
-     * @link 
+     * @link
      * http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html#_getPlatformApplicationAttributes
      */
     public function getPlatformApplicationAttributes($platformApplicationArn = '')
@@ -124,7 +123,7 @@ class Wrapper
 
     /**
      * set Endpoint Enabled
-     * 
+     *
      * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html#_setEndpointAttributes
      */
     public function setEnabled($endpointArn = '')
@@ -162,7 +161,9 @@ class Wrapper
      */
     public function createTopic($topicName = '')
     {
-        if (!mb_check_encoding($topicName, 'ASCII') || preg_match('/[^a-zA-Z_\-0-9]/i', $topicName) || strlen($topicName) < 1 || strlen($topicName) > 256) {
+        if (!mb_check_encoding($topicName, 'ASCII') || preg_match('/[^a-zA-Z_\-0-9]/i',
+                $topicName) || strlen($topicName) < 1 || strlen($topicName) > 256
+        ) {
             throw new \Exception('Invalid topic name.');
         }
 

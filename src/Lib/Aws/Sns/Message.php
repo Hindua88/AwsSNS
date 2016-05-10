@@ -20,7 +20,7 @@ class Message
 
     public function setMessage($message)
     {
-        $this->message = (string) $message;
+        $this->message = (string)$message;
     }
 
     public function setBadge($badge)
@@ -30,7 +30,7 @@ class Message
 
     public function setSound($sound)
     {
-        $this->sound = (string) $sound;
+        $this->sound = (string)$sound;
     }
 
     public function getApnsSandboxMessage($message)
@@ -39,11 +39,12 @@ class Message
 
         return json_encode(array(
             Platform::APNS_SANDBOX => json_encode(array(
-                'aps' => array(
-                    'alert' => addslashes($this->message),
-                    'badge' => $this->badge,
-                    'sound' => $this->sound
-                ))
+                    'aps' => array(
+                        'alert' => addslashes($this->message),
+                        'badge' => $this->badge,
+                        'sound' => $this->sound
+                    )
+                )
             )
         ));
     }
@@ -54,44 +55,45 @@ class Message
 
         return json_encode(array(
             Platform::GCM => json_encode(array(
-                'data' => array(
-                    'message' => $this->message,
-                ))
+                    'data' => array(
+                        'message' => $this->message,
+                    )
+                )
             )
         ));
     }
 
-    public function getArnMessage($endpointArn = '', $message = '') {
+    public function getArnMessage($endpointArn = '', $message = '')
+    {
         $Arn = new Arn($endpointArn);
 
-        switch ($Arn->platform)
-        {
+        switch ($Arn->platform) {
             case Platform::APNS:
-            break;
+                break;
 
             case Platform::APNS_SANDBOX:
                 $message = $this->getApnsSandboxMessage($message);
-            break;
+                break;
 
             case Platform::ADM:
-            break;
+                break;
 
             case Platform::GCM:
                 $message = $this->getGcmMessage($message);
-            break;
+                break;
 
             case Platform::BAIDU:
-            break;
+                break;
 
             case Platform::WNS:
-            break;
+                break;
 
             case Platform::MPNS:
-            break;
+                break;
 
             default:
                 throw new \Exception('Platform ' . $Arn->platform . ' is not supported.');
-            break;
+                break;
         };
 
         return $message;

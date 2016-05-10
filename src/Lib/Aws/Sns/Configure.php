@@ -14,7 +14,8 @@ class Configure
         \Cake\Core\Configure::load(self::CONFIG_FILE, 'default');
     }
 
-    public static function read($name) {
+    public static function read($name)
+    {
         $instance = new Configure();
         return $instance->{$name}();
     }
@@ -23,34 +24,33 @@ class Configure
     {
         $instance = new Configure();
 
-        switch ($platform)
-        {
+        switch ($platform) {
             case Platform::APNS:
-            break;
+                break;
 
             case Platform::APNS_SANDBOX:
                 $platformApplicationArn = $instance->apnsSandboxApplicationArn();
-            break;
+                break;
 
             case Platform::ADM:
-            break;
+                break;
 
             case Platform::GCM:
                 $platformApplicationArn = $instance->gcmApplicationArn();
-            break;
+                break;
 
             case Platform::BAIDU:
-            break;
+                break;
 
             case Platform::WNS:
-            break;
+                break;
 
             case Platform::MPNS:
-            break;
+                break;
 
             default:
                 throw new \Exception('Platform ' . ($platform ? $platform : 'NULL') . ' is not supported.');
-            break;
+                break;
         };
 
         return $platformApplicationArn;
