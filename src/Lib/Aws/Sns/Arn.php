@@ -11,7 +11,8 @@ namespace Lib\Aws\Sns;
  * arn:partition:service:region:account:resourcetype:resource
  *
  * Here, we focus in endpoint's arns, example:
- * arn:aws:sns:us-east-1:492499697490:endpoint/APNS_SANDBOX/iballtest/46405ab2-c446-3a20-952b-9d17b29ec6cf
+ * arn:aws:sns:ap-southeast-1:69696696969:endpoint/APNS_SANDBOX/168dzo_dev/05b339c5-104c-32a4-a039-b0b6c7e40459
+ * arn:aws:sns:ap-southeast-1:69696696969:endpoint/APNS/168dzo_pro/01120029-0168-30b2-a2cf-a3b2f93d4fd5
  *
  * @link http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
  */
@@ -19,7 +20,7 @@ class Arn
 {
     public $base;
 
-    // COMMON
+    // Common
     public $partition;
     public $service;
     public $region;
@@ -27,7 +28,7 @@ class Arn
     public $resourcetype;
     public $resource;
 
-    // SNS
+    // Sns
     public $platform;
     public $appname;
     public $id;
@@ -40,55 +41,58 @@ class Arn
         $this->extract($arn);
     }
 
+    /*
+        Extract end point to get information
+
+        Ex: arn:aws:sns:ap-southeast-1:69696696969:endpoint/APNS_SANDBOX/168dzo_dev/05b339c5-104c-32a4-a039-b0b6c7e40459
+        Result:
+        Arn object: {
+          ["base"]=>
+          string(109) "arn:aws:sns:ap-southeast-1:69696696969:endpoint/APNS_SANDBOX/168dzo_dev/05b339c5-104c-32a4-a039-b0b6c7e40459"
+          ["partition"]=>
+          string(3) "aws"
+          ["service"]=>
+          string(3) "sns"
+          ["region"]=>
+          string(14) "ap-southeast-1"
+          ["account"]=>
+          string(12) "69696696969"
+          ["resourcetype"]=>
+          string(8) "endpoint"
+          ["resource"]=>
+          string(61) "/APNS_SANDBOX/168dzo_dev/05b339c5-104c-32a4-a039-b0b6c7e40459"
+          ["platform"]=>
+          string(12) "APNS_SANDBOX"
+          ["appname"]=>
+          string(10) "168dzo_dev"
+          ["id"]=>
+          string(36) "05b339c5-104c-32a4-a039-b0b6c7e40459"
+        }
+    */
     private function extract($arn = '')
     {
-        if (!is_string($arn) || !trim($arn)) {
+        if (empty($arn)) {
             return false;
         }
 
         // Parse paths
         $parse_arn = explode('/', $arn);
-
-        if (isset($parse_arn[0])) {
-            $namespace = $parse_arn[0];
-
-            if (count($parse_arn) > 1) {
-                $this->resource = str_replace($namespace, '', $arn);
-            }
+        $namespace = @$parse_arn[0];
+        if ($parse_arn) {
+            $this->resource = str_replace($namespace, '', $arn);
         }
-
-        if (isset($parse_arn[1])) {
-            $this->platform = $parse_arn[1];
-        }
-
-        if (isset($parse_arn[2])) {
-            $this->appname = $parse_arn[2];
-        }
-
-        if (isset($parse_arn[3])) {
-            $this->id = $parse_arn[3];
-        }
+        $this->platform = @$parse_arn[1];
+        $this->appname = @$parse_arn[2];
+        $this->id = @$parse_arn[3];
 
         // Parse namespace
         $parse_ns = explode(':', $namespace);
+        $this->partition = @$parse_ns[1];
+        $this->service = @$parse_ns[2];
+        $this->region = @$parse_ns[3];
+        $this->account = @$parse_ns[4];
 
-        if (isset($parse_ns[1])) {
-            $this->partition = $parse_ns[1];
-        }
-
-        if (isset($parse_ns[2])) {
-            $this->service = $parse_ns[2];
-        }
-
-        if (isset($parse_ns[3])) {
-            $this->region = $parse_ns[3];
-        }
-
-        if (isset($parse_ns[4])) {
-            $this->account = $parse_ns[4];
-        }
-
-        if (isset($parse_ns[5])) {
+        if (@$parse_ns[5]) {
             if (count($parse_arn) == 1) {
                 $this->resource = $parse_ns[5];
             } else {
