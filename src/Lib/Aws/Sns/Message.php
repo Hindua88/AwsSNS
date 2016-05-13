@@ -23,7 +23,7 @@ class Message
         }
         if (empty($message)) {
             throw new \Exception("message is empty!");
-        } elseif (! is_array$message)) {
+        } elseif (! is_array($message)) {
             throw new \Exception("Message must be an array!");
         }
         $this->message = $message;

@@ -340,6 +340,11 @@ Example: array(2) {
      */
     public function createPlatformEndpoint($token = array())
     {
+        if (is_array($token)) {
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to create multi endpoint with total token: " . count($token) . " end points");
+        } else {
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to create endpoint with token: {$token}");
+        }
         $api = new Api('createPlatformEndpoint');
         $api->setSnsclient($this->sns_client);
 
@@ -451,6 +456,7 @@ Ex: array(2) {
             throw new \Exception('Invalid topic name.');
         }
 
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " to create topic: {$topicName}");
         $api = new Api('createTopic');
         $api->setSnsclient($this->sns_client);
         $api->addParam([
@@ -501,6 +507,12 @@ array(100) {
      */
     public function subscribe($topicArn = '', $endpointArn = '', $protocol = 'application')
     {
+        if (is_array($endpointArn)) {
+            $total_endpoint = count($endpointArn);
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to add total end point {$total_endpoint} into topic {$topicArn}");
+        } else {
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to add end point {$endpointArn} into topic {$topicArn}");
+        }
         $api = new Api('subscribe');
         $api->setSnsclient($this->sns_client);
         if (is_array($endpointArn)) {
@@ -572,6 +584,12 @@ array(100) {
      */
     public function publishToEndpoint($endpointArn = '', $content = array())
     {
+        if (is_array($endpointArn)) {
+            $total_endpoint = count($endpointArn);
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to publish message to {$total_endpoint} end points");
+        } else {
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to publish message to {$endpointArn} end point");
+        }
         $api = new Api('publish');
         $api->setSnsclient($this->sns_client);
         $arn = new Arn($endpointArn); 
