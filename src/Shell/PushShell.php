@@ -30,7 +30,6 @@ class PushShell extends Shell
         $platform_application = 'arn:aws:sns:ap-southeast-1:69696696969:app/APNS/m90_prod';
 
         $this->sns_client = new SnSMobileClient($sns_key, $sns_secret, $sns_region, $platform_application);
-        $this->sns_client->setDebugFileLog('/tmp/aws_sns.log');
     }
 
     /*
@@ -76,13 +75,25 @@ class PushShell extends Shell
 
     public function main()
     {
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+
 //        $result = $this->sns_client->listPlatformApplications();
 //       $result = $this->sns_client->listEndpointsByPlatformApplication();
 //        $result = $this->sns_client->getPlatformApplicationAttributes();
 //        $result = $this->sns_client->getEndpointAttributes('arn:aws:sns:ap-southeast-1:69696696969:endpoint/APNS/m90_prod/01457f51-f784-3356-b142-ebf5be0410e4');
         $result = $this->sns_client->listTopics();
+//        var_dump($result);
+//        $result = $this->sns_client->listTopics($result['NextToken']);
 //        $result = $this->sns_client->getTopicName('daudm');
-        var_dump($result);
-    }
+//        var_dump($result);
 
+//        var_dump(ini_get('date.timezone'));
+
+        /*
+        $this->sns_client->writeDebugLog('debug log');
+        $this->sns_client->writeInfoLog('info log');
+        $this->sns_client->writeWarnLog('warn log');
+        $this->sns_client->writeErrorLog('error log');
+         */
+    }
 }

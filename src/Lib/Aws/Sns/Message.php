@@ -4,8 +4,16 @@ namespace Lib\Aws\Sns;
 class Message
 {
     private $platform; // APNS, APNS_SANDBOX or GCM
-    private $message;
+    private $message; // array
 
+    /*
+     * Construct push message
+     *
+     * @param string $platform
+     * @parm array $message
+     *
+     * @return null
+     */
     public function __construct($platform, $message = array())
     {
         $this->platform = $platform;
@@ -21,6 +29,11 @@ class Message
         $this->message = $message;
     }
 
+    /*
+     * Get data 
+     *
+     * @return string
+     */
     public function getData()
     {
         return json_encode(array(

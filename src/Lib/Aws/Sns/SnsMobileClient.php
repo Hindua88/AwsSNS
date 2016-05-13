@@ -2,8 +2,8 @@
 namespace Lib\Aws\Sns;
 
 /**
- * AWS SNS API Wrapper
- * Note: SnSMobileClient only support ios and android
+ * AWS SNS API Wrapper: SnsMobileClient
+ * SnsMobileClient only support ios and android
  *
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html
  */
@@ -16,6 +16,7 @@ use Aws\Sns\SnsClient as SnsClient;
 use Guzzle\Plugin\Log\LogPlugin as LogPlugin;
 use Lib\Util\CommonHelper as CommonHelper;
 use Lib\Util\Constants as Constants;
+use Lib\Util\Logger as Logger;
 
 class SnsMobileClient
 {
@@ -59,15 +60,18 @@ class SnsMobileClient
     private $platform_application;
     private $platform; // is APNS, APNS_SANDBOX or GCM
     private $sns_client;
+    private $file_request_log;
+    private $log;
 
     /*
-     * Init
+     * Construct SnsMobileClient
      * 
      * @param string $sns_key
      * @param string $sns_secret
      * @param string $sns_region
      * @param string $platform_application
      *
+     * @return null
      */
     function __construct($sns_key, $sns_secret, $sns_region, $platform_application)
     {
@@ -81,29 +85,43 @@ class SnsMobileClient
         $arn = new Arn($this->platform_application);
         $this->platform = $arn->platform;
         if (empty($this->platform)) {
-            throw new \Exception("Wrong platform_application: {$platform_application} => Not detect platform!");
+            throw new \Exception("Wrong platform_application: {$platform_application} => not detect platform!");
         }
         $platforms = array(Platform::APNS, Platform::APNS_SANDBOX, Platform::GCM);
         if (! in_array($this->platform, $platforms)) {
             throw new \Exception("Platform {$this->platform} is not supported!");
         }
 
-        // Check correct enviroment to push notification for ios
-#        $environment = CommonHelper::getEnvironmentByIPAddress(); 
-#        if ($environment == Constants::ENV_DEVELOP && $this->platform == Platform::APNS) {
-#            throw new \Exception("Environment " . Constants::ENV_DEVELOP . " could not use config product. Please check config aws sns!");  
-#        }
+        if (Constants::ALLOW_CHECK_IP_PRODUCTION) {
+            // Check correct enviroment to push notification for ios
+            $environment = CommonHelper::getEnvironmentByIPAddress(); 
+            if ($environment == Constants::ENV_DEVELOP && $this->platform == Platform::APNS) {
+                throw new \Exception("Environment " . Constants::ENV_DEVELOP . " could not use config product. Please check config aws sns!");  
+            }
+        }
 
+        // Init SnsClient
         $this->sns_client = SnsClient::factory(array(
-            'key'    => $sns_key,
+            'key' => $sns_key,
             'secret' => $sns_secret,
             'region' => $sns_region,
         ));
 
+        // Set log file
+        if (! empty(Constants::FILE_REQUEST_LOG)) {
+            $this->setDebugRequestFileLog(Constants::FILE_REQUEST_LOG); // View request, response api
+        }
+        if (! empty(Constants::FILE_DEBUG_LOG)) {
+            $this->setDebugFileLog(Constants::FILE_DEBUG_LOG); // Custom log
+        }
     }
 
     /*
      * Get name topic by environment (production or sandbox) with ios
+     *
+     * @param string $name
+     *
+     * @return string
      */
     public function getTopicName($name)
     {
@@ -125,15 +143,73 @@ class SnsMobileClient
         return $result;
     }
 
+    /*
+     * Set debug request log
+     *
+     * @param string $path_file
+     *
+     * @return null
+     */
+    public function setDebugRequestFileLog($path_file)
+    {
+        $this->file_request_log = $path_file;
+        if (file_exists($this->file_request_log) && ! is_writable($this->file_request_log)) {
+            throw new \Exception("The file exists, but could not be opened for writing. Check that appropriate permissions have been set.");
+        }
+        if ($stream = fopen($this->file_request_log, "a")) {
+            $this->sns_client->addSubscriber(LogPlugin::getDebugPlugin(true, $stream));
+        }
+    }
 
     /*
-     * Get debug log
+     * Set debug log by level: (debug, info, warn, error, fatal)
+     * @param string $path_file
+     *
+     * @return null
      */
-    public function setDebugFileLog($path_file_log)
+    public function setDebugFileLog($path_file)
     {
-        $stream = fopen($path_file_log, 'a');
-        // add debug log
-        $this->sns_client->addSubscriber(LogPlugin::getDebugPlugin(true, $stream));
+        $this->log = new Logger($path_file, Constants::LOG_LEVEL); 
+    }
+    
+    /*
+     * Write debug log
+     */
+    public function writeDebugLog($message)
+    {
+        if ($this->log) {
+            $this->log->debug($message);
+        }
+    }
+
+    /*
+     * Write info log
+     */
+    public function writeInfoLog($message)
+    {
+        if ($this->log) {
+            $this->log->info($message);
+        }
+    }
+
+    /*
+     * Write warn log
+     */
+    public function writeWarnLog($message)
+    {
+        if ($this->log) {
+            $this->log->warn($message);
+        }
+    }
+
+    /*
+     * Write error log
+     */
+    public function writeErrorLog($message)
+    {
+        if ($this->log) {
+            $this->log->error($message);
+        }
     }
 
     /**

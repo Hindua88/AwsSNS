@@ -1,7 +1,12 @@
 <?php
 namespace Lib\Aws\Sns;
 
+require_once APP . DS . 'Lib' . DS . 'Util' . DS . 'autoload.php';
+
 use Guzzle\Service\Exception\CommandTransferException;
+use Lib\Util\Constants as Constants;
+use Lib\Util\Logger as Logger;
+
 
 class Api
 {
@@ -9,6 +14,7 @@ class Api
     protected $api;
     protected $model_name;
     protected $params;
+    private $log;
 
     protected static $list_model_name = [
         'listPlatformApplications' => 'PlatformApplications',
@@ -25,6 +31,13 @@ class Api
         'publish' => 'MessageId',
     ];
 
+    /*
+     * Constuct api
+     *
+     * @param string $api
+     *
+     * @return null
+     */
     public function __construct($api, $params = array())
     {
         if (!isset(self::$list_model_name[$api])) {
@@ -34,24 +47,37 @@ class Api
         $this->api = $api;
         $this->model_name = self::$list_model_name[$api];
         $this->params = (array)$params;
+        if (! empty(Constants::FILE_DEBUG_LOG)) {
+            $this->log = new Logger(Constants::FILE_DEBUG_LOG, Constants::LOG_LEVEL); 
+        }
     }
 
     /*
      * Get SnsClient propery
+     *
+     * @param object SnsClient
+     *
+     * @return null
      */
     public function setSnsclient($sns_client)
     {
         $this->client = $sns_client;
     }
 
-    public function addParam($param = array())
+    /*
+     * Add list of param for api
+     *
+     * @param array $params
+     *
+     * @return null
+     */
+    public function addParam($params = array())
     {
-        array_push($this->params, (array)$param);
+        array_push($this->params, (array)$params);
     }
 
     /**
      * Execute API command
-     *
      */
     public function execute()
     {
@@ -59,6 +85,11 @@ class Api
         if (empty($this->params) || count($this->params) == 1) {
             return $this->direct();
         } else { // Have many parameters bundle
+            $total_param = count($this->params);
+            if (Constants::LIMIT_MAX_PARAM_API > 0 &&
+                $total_param > Constants::LIMIT_MAX_PARAM_API) {
+                throw new \Exception("Api: {$this->api} total max params {$total_param} > limit max param " . Constants::LIMIT_MAX_PARAM_API);
+            }
             return $this->parallel();
         }
     }
@@ -91,14 +122,12 @@ class Api
 
     /**
      * Execute direct API command
-     *
      */
     public function direct()
     {
+        // Set the internal pointer of an array to its first element
         $params = reset($this->params) ? reset($this->params) : array();
-
         $result = array();
-
         try {
             $data = $this->client->{$this->api}($params);
             $this->parseResultData($data, $result);
@@ -144,18 +173,37 @@ class Api
                 $this->parseResultData($data, $result[$index]);
             }
             if ($e->getFailedCommands()) {
-                error_log("SnsMoibleClient -> Api {$this->api} (parallel): total commands " . count($commands)
+                $this->writeErrorLog("SnsMoibleClient -> Api {$this->api} (parallel): total commands " . count($commands)
                     . ", fail: " . count($e->getFailedCommands()));
             }
             // Fail 
             foreach ($e->getFailedCommands() as $command) {
                 $index = array_search($command, $commands);
                 $result[$index] = $e->getExceptionForFailedCommand($command)->getMessage();
-                error_log("SnsMoibleClient -> Api {$this->api} (parallel) "
+                $this->writeErrorLog("SnsMoibleClient -> Api {$this->api} (parallel) "
                     . $e->getExceptionForFailedCommand($command)->getMessage());
             }
         }
 
         return $result;
+    }
+
+    /*
+     * Write log
+     */
+    private function writeErrorLog($message)
+    {
+        if ($this->log) {
+            $this->log->error($message);
+        } else {
+            error_log($message);
+        }
+    } 
+
+    public function __destruct()
+    {
+        if ($this->log) {
+            unset($this->log);
+        }
     }
 }

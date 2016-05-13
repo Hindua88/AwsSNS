@@ -91,7 +91,6 @@ class Arn
         $this->service = @$parse_ns[2];
         $this->region = @$parse_ns[3];
         $this->account = @$parse_ns[4];
-
         if (@$parse_ns[5]) {
             if (count($parse_arn) == 1) {
                 $this->resource = $parse_ns[5];
