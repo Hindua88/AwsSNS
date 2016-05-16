@@ -9,8 +9,9 @@ namespace Lib\Aws\Sns;
  */
 
 # Include file autoload.php of aws-sdk-php library
-require_once ROOT . DS . 'vendor' . DS . 'autoload.php';
-require_once APP . DS . 'Lib' . DS . 'Util' . DS . 'autoload.php';
+require_once ROOT . DS . 'vendor' . DS . 'autoload.php'; // To do: Replace ROOT directory of your project to load aws-sdk-php lib
+
+require_once dirname(dirname(__DIR__)) . DS . 'Util' . DS . 'autoload.php';
 
 use Aws\Sns\SnsClient as SnsClient;
 use Guzzle\Plugin\Log\LogPlugin as LogPlugin;

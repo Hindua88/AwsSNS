@@ -19,12 +19,7 @@ class PushShell extends Shell
         parent::initialize();
 
         // Read config from file or database
-#        $sns_key = 'AKIAJWRXPA4L4HTKIPQQ';
-#        $sns_secret = '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';
-#        $sns_region = 'ap-southeast-1';
-#        $platform_application = 'arn:aws:sns:ap-southeast-1:69696696969:app/APNS_SANDBOX/168dzo_dev';
-
-        # My account free aws
+        // Ex:  My account free aws
         $sns_key = 'AKIAIVTHU7R7V3YXMVBQ';
         $sns_secret = '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';
         $sns_region = 'ap-southeast-1';
@@ -88,7 +83,7 @@ class PushShell extends Shell
         #$topicName = $this->sns_client->getTopicName('demo_topic');
 
         $topicName = $this->sns_client->getTopicName('demo_test');
-        $topicArn = $this->sns_client->createTopic($topicName);
+//        $topicArn = $this->sns_client->createTopic($topicName);
 #        $this->sns_client->deleteTopic($topicArn);
 
         $token_5s = '115ef84197a39ee1ece9bb9b52d6891b5ad70b35ebe1bb1c20fa78dd952343b1';

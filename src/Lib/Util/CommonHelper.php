@@ -1,11 +1,5 @@
 <?php
 namespace Lib\Util;
-/*
- * Common Helper
- * @author: dau's
- * @created: 2016/05/10
- */
-require_once 'Constants.php';
 
 class CommonHelper
 {

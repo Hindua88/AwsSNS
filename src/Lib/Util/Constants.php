@@ -38,7 +38,7 @@ class Constants {
     const ENABLE_REQUEST_LOG = 1; // 0: False, 1: True
 
     // Allow to check enviroment push by ip address
-    const ALLOW_CHECK_IP_PRODUCTION = 0; // 0: False, 1: True
+    const ALLOW_CHECK_IP_PRODUCTION = 1; // 0: False, 1: True
     public static function getListIPProduction()
     { 
         return 
