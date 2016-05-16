@@ -382,7 +382,7 @@ Ex: array(2) {
         $api->addParam([
             'EndpointArn' => $endpointArn,
             'Attributes' => [
-                'Enabled' => 'True'
+                'Enabled' => 'true'
             ]
         ]);
 
@@ -402,7 +402,7 @@ Ex: array(2) {
         $api->addParam([
             'EndpointArn' => $endpointArn,
             'Attributes' => [
-                'Enabled' => 'False'
+                'Enabled' => 'false'
             ]
         ]);
 
@@ -478,12 +478,25 @@ array(2) {
      */
     public function deleteTopic($topicArn = '')
     {
-        $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete topic arn: {$topicArn}");
+        if (is_array($topicArn)) {
+            $total = count($topicArn);
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete {$total} topic arn");
+        } else {
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete topic arn: {$topicArn}");
+        }
         $api = new Api('deleteTopic');
         $api->setSnsclient($this->sns_client);
-        $api->addParam([
-            'TopicArn' => $topicArn,
-        ]);
+        if (is_array($topicArn)) {
+            foreach ($topicArn as $_topicArn) {
+                $api->addParam([
+                    'TopicArn' => $_topicArn,
+                ]);
+            }
+        } else {
+            $api->addParam([
+                'TopicArn' => $topicArn,
+            ]);
+        }
 
         return $api->execute();
     }
