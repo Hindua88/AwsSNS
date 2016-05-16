@@ -49,7 +49,7 @@ class Api
         $this->api = $api;
         $this->model_name = self::$list_model_name[$api];
         $this->params = (array)$params;
-        if (! empty(Constants::FILE_DEBUG_LOG)) {
+        if (Constants::ENABLE_DEBUG_LOG && ! empty(Constants::FILE_DEBUG_LOG)) {
             $this->log = new Logger(Constants::FILE_DEBUG_LOG, Constants::LOG_LEVEL); 
         }
     }
