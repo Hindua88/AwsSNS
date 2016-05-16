@@ -671,9 +671,9 @@ array(100) {
     {
         $firstEndpoint = null;
         if (is_array($endpointArn)) {
-            $this->writeDebugLog("Execute " . __FUNCTION__ . " to publish message to {$total_endpoint} end points");
+            $total = count($endpointArn);
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to publish message to {$total} end points");
             $firstEndpoint = @$endpointArn[0];
-            $total_endpoint = count($endpointArn);
         } else {
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to publish message to {$endpointArn} end point");
             $firstEndpoint = $endpointArn;
