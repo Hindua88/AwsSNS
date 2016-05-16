@@ -20,40 +20,6 @@ use Lib\Util\Logger as Logger;
 
 class SnsMobileClient
 {
-     /* Configure Class
-     iOS:
-     return [
-        'sns_app' => [
-            'key' => 'AKIAIFMZ7LG5EWXEUC6A',
-            'secret' => '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',
-            'region' => 'ap-southeast-1'
-        ],
-
-        'platform_application' => [
-            'APNS' => 'arn:aws:sns:ap-southeast-1:69696696969:app/APNS/168dzo_prod'
-        ],
-
-        'platform_application_sandbox' => [
-            'APNS_SANDBOX' => 'arn:aws:sns:ap-southeast-1:69696696969:app/APNS_SANDBOX/168dzo_dev'
-        ]
-    ];
-    Android:
-    return [
-        'sns_app' => [
-            'key' => 'AKIAIFMZ7LG5EWXEUC6A',
-            'secret' => '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',
-            'region' => 'ap-southeast-1'
-        ],
-
-        'platform_application' => [
-            'GCM' => 'arn:aws:sns:ap-southeast-1:69696696969:app/GCM/ixu_android_prod'
-        ],
-
-        'platform_application_sandbox' => [
-            'GCM' => 'arn:aws:sns:ap-southeast-1:69696696969:app/GCM/android_ixu_product'
-        ]
-        ];
-    */
     private $sns_key;
     private $sns_secret;
     private $sns_region;
@@ -108,16 +74,16 @@ class SnsMobileClient
         ));
 
         // Set log file
-        if (! empty(Constants::FILE_REQUEST_LOG)) {
+        if (Constants::ENABLE_REQUEST_LOG && ! empty(Constants::FILE_REQUEST_LOG)) {
             $this->setDebugRequestFileLog(Constants::FILE_REQUEST_LOG); // View request, response api
         }
-        if (! empty(Constants::FILE_DEBUG_LOG)) {
+        if (Constants::ENABLE_DEBUG_LOG && ! empty(Constants::FILE_DEBUG_LOG)) {
             $this->setDebugFileLog(Constants::FILE_DEBUG_LOG); // Custom log
         }
     }
 
     /*
-     * Get name topic by environment (production or sandbox) with ios
+     * Get name topic by environment (production or sandbox) with ios and android
      *
      * @param string $name
      *
@@ -125,20 +91,21 @@ class SnsMobileClient
      */
     public function getTopicName($name)
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " to get topic name with name {$name}");
         if (empty($name)) {
             return '';
         }
-        $name = strtoupper($name);
         $result = Constants::PREFIX_TOPIC_NAME_AWS_SNS;
         if ($this->platform == Platform::APNS_SANDBOX) {
-            $result .= '_IOS_' . Constants::ENV_DEVELOP_PUSH . '_' . $name; 
+            $result .= '_' . Constants::OS_IOS . '_' . Constants::ENV_DEVELOP_PUSH . '_' . $name;
         } elseif ($this->platform == Platform::APNS) {
-            $result .= '_IOS_' . Constants::ENV_PRODUCT_PUSH . '_' . $name; 
+            $result .= '_' . Constants::OS_IOS . '_' . Constants::ENV_PRODUCT_PUSH . '_' . $name;
         } elseif (Constants::ENV == Constants::ENV_PRODUCT) {
-            $result .= '_ANDROID_' . Constants::ENV_PRODUCT_PUSH . '_' . $name; 
+            $result .= '_' . Constants::OS_ANDROID . '_' . Constants::ENV_PRODUCT_PUSH . '_' . $name;
         } else {
-            $result .= '_ANDROID_' . Constants::ENV_DEVELOP_PUSH . '_' . $name; 
+            $result .= '_' . Constants::OS_ANDROID . '_' . Constants::ENV_DEVELOP_PUSH . '_' . $name;
         }
+        $result = strtoupper($result);
 
         return $result;
     }
@@ -248,6 +215,7 @@ class SnsMobileClient
      */
     public function listPlatformApplications()
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__);
         $api = new Api('listPlatformApplications');
         $api->setSnsclient($this->sns_client);
 
@@ -291,6 +259,7 @@ class SnsMobileClient
      */
     public function listEndpointsByPlatformApplication($nextToken = null)
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " with nextToken {$nextToken}");
         $api = new Api('listEndpointsByPlatformApplication');
         $api->setSnsclient($this->sns_client);
         
@@ -324,6 +293,7 @@ Example: array(2) {
      */
     public function getPlatformApplicationAttributes()
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__);
         $api = new Api('getPlatformApplicationAttributes');
         $api->setSnsclient($this->sns_client);
         $api->addParam([
@@ -337,6 +307,14 @@ Example: array(2) {
      * createPlatformEndpoint
      *
      * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html#_createPlatformEndpoint
+    
+     * @return string (endpointArn) or array
+Example: array: array(2) {
+  [0]=>
+  string(107) "arn:aws:sns:ap-southeast-1:634501430222:endpoint/APNS_SANDBOX/My168dzo/5be0ec00-2c41-3a29-8921-9b613a4196cf"
+  [1]=>
+  string(107) "arn:aws:sns:ap-southeast-1:634501430222:endpoint/APNS_SANDBOX/My168dzo/fa6e559d-e0d8-33c0-a185-ed989c7f76e3"
+} 
      */
     public function createPlatformEndpoint($token = array())
     {
@@ -380,6 +358,7 @@ Ex: array(2) {
      */
     public function getEndpointAttributes($endpointArn = '')
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " with end point {$endpointArn}");
         $api = new Api('getEndpointAttributes');
         $api->setSnsclient($this->sns_client);
         $api->addParam([
@@ -396,6 +375,7 @@ Ex: array(2) {
      */
     public function setEndpointEnabled($endpointArn = '')
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " with end point {$endpointArn}");
         $api = new Api('setEndpointAttributes');
         $api->setSnsclient($this->sns_client);
         $api->addParam([
@@ -415,6 +395,7 @@ Ex: array(2) {
      */
     public function setEndpointDisabled($endpointArn = '')
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " with end point {$endpointArn}");
         $api = new Api('setEndpointAttributes');
         $api->setSnsclient($this->sns_client);
         $api->addParam([
@@ -431,14 +412,37 @@ Ex: array(2) {
      * deleteEndpoint
      *
      * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html#_deleteEndpoint
+     *
+     * @return string | array
+Example return array:
+array(2) {
+  [0]=>
+  string(8) "Success."
+  [1]=>
+  string(8) "Success."
+}
      */
     public function deleteEndpoint($endpointArn = '')
     {
+        if (is_array($endpointArn)) {
+            $total_endpoint = count($endpointArn);
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete total {$total_endpoint} end points");
+        } else {
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete {$endpointArn} end point");
+        }
         $api = new Api('deleteEndpoint');
         $api->setSnsclient($this->sns_client);
-        $api->addParam([
-            'EndpointArn' => $endpointArn,
-        ]);
+        if (is_array($endpointArn)) {
+            foreach ($endpointArn as $_endpointArn) {
+                $api->addParam([
+                    'EndpointArn' => $_endpointArn,
+                ]);
+            }
+        } else {
+            $api->addParam([
+                'EndpointArn' => $endpointArn,
+            ]);
+        }
 
         return $api->execute();
     }
@@ -467,6 +471,23 @@ Ex: array(2) {
     }
 
     /**
+     * deleteTopic
+     *
+     * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html#_deleteTopic
+     */
+    public function deleteTopic($topicArn = '')
+    {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete topic arn: {$topicArn}");
+        $api = new Api('deleteTopic');
+        $api->setSnsclient($this->sns_client);
+        $api->addParam([
+            'TopicArn' => $topicArn,
+        ]);
+
+        return $api->execute();
+    }
+
+    /**
      * List Topics
      * Returns a list of the requester's topics. Each call returns a limited list of topics, up to 100. If there are more topics, a NextToken is also returned. Use the NextToken parameter in a new ListTopics call to get further results.
      *
@@ -489,6 +510,7 @@ array(100) {
      */
     public function listTopics($nextToken = null)
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " to list topic with nextToken {$nextToken}");
         $api = new Api('listTopics');
         $api->setSnsclient($this->sns_client);
         if ($nextToken) {
@@ -534,13 +556,49 @@ array(100) {
         return $api->execute();
     }
 
+    /*
+     * unsubscribe
+     *
+     * @link http://docs.aws.amazon.com/aws-sdk-php/v2/api/class-Aws.Sns.SnsClient.html#_unsubscribe
+     */
+    public function unsubscribe($subscriptionArn = '')
+    {
+        if (is_array($subscriptionArn)) {
+            $total = count($subscriptionArn);
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete total {$total} subscribes");
+        } else {
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete {$subscriptionArn} subscribe");
+        }
+        $api = new Api('unsubscribe');
+        $api->setSnsclient($this->sns_client);
+        if (is_array($subscriptionArn)) {
+            foreach ($subscriptionArn as $_subscriptionArn) {
+                $api->addParam([
+                    'SubscriptionArn' => $_subscriptionArn,
+                ]);
+            }
+        } else {
+            $api->addParam([
+                'SubscriptionArn' => $subscriptionArn,
+            ]);
+        }
+
+        return $api->execute();
+    }
+
     /**
      * listSubscriptionsByTopic
      *
      * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html#_listSubscriptionsByTopic
+     *
+     * @param string $topicArn
+     * @param string $nextToken
+     *
+     * @return array ('Subscriptions' => array, 'NextToken' => string);
      */
     public function listSubscriptionsByTopic($topicArn = '', $nextToken = null)
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " to list subscriptions {$topicArn} topic with nextToken {$nextToken}");
         $api = new Api('listSubscriptionsByTopic');
         $api->setSnsclient($this->sns_client);
         if ($nextToken) {
@@ -561,10 +619,17 @@ array(100) {
      * Publish to Topic
      *
      * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html#_publish
+     *
+     * @param string $topicArn
+     * @param array $content
+     *
+     * @return string
      */
     public function publishToTopic($topicArn = '', $content = array())
     {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " to publish message to {$topicArn} topic");
         $message = new Message($this->platform, $content);
+        $this->writeDebugLog("Message {$message->getData()}");
 
         $api = new Api('publish');
         $api->setSnsclient($this->sns_client);
@@ -581,19 +646,29 @@ array(100) {
      * Publish to Endpoint
      *
      * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html#_publish
+     *
+     * @param string|array $endpointArn
+     * @param array $content
+     *
+     * @return string|array
+     *
      */
     public function publishToEndpoint($endpointArn = '', $content = array())
     {
+        $firstEndpoint = null;
         if (is_array($endpointArn)) {
-            $total_endpoint = count($endpointArn);
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to publish message to {$total_endpoint} end points");
+            $firstEndpoint = @$endpointArn[0];
+            $total_endpoint = count($endpointArn);
         } else {
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to publish message to {$endpointArn} end point");
+            $firstEndpoint = $endpointArn;
         }
         $api = new Api('publish');
         $api->setSnsclient($this->sns_client);
-        $arn = new Arn($endpointArn); 
+        $arn = new Arn($firstEndpoint); 
         $message = new Message($arn->platform, $content);
+        $this->writeDebugLog("Message {$message->getData()}");
 
         if (is_array($endpointArn)) {
             foreach ($endpointArn as $_endpointArn) {

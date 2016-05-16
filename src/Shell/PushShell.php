@@ -62,14 +62,14 @@ class PushShell extends Shell
 
         // Example For iOS
         $message = array(
+            'default' => $text, // requried
             'aps' => array(
-                'alert' => addslashes($text),
+                'alert' => $text,
                 'badge' => 1,
                 'sound' => 'default'
             ),
             'url' => $url
         );
-        //
 
         return $message;
     }
@@ -85,36 +85,34 @@ class PushShell extends Shell
 //        $result = $this->sns_client->listTopics();
 //        var_dump($result);
 //        $result = $this->sns_client->listTopics($result['NextToken']);
-//        $result = $this->sns_client->getTopicName('daudm');
+        #$topicName = $this->sns_client->getTopicName('demo_topic');
+
+        $topicName = $this->sns_client->getTopicName('demo_test');
+        $topicArn = $this->sns_client->createTopic($topicName);
+#        $this->sns_client->deleteTopic($topicArn);
+
+        $token_5s = '115ef84197a39ee1ece9bb9b52d6891b5ad70b35ebe1bb1c20fa78dd952343b1';
+        $token_6splus = '337db0f8b98331f33dab1a2265b5937fb7fa829b05f8100af72523fa2288afce';
+        $tokens = array($token_5s, $token_6splus);
+//        $tokens = array($token_6splus);
+        $tokens = $token_6splus;
+
+//        $end_point = $this->sns_client->createPlatformEndpoint($token_5s);
+        $end_points = $this->sns_client->createPlatformEndpoint($tokens);
+//        var_dump($end_points);
+        
+//        $result = $this->sns_client->deleteEndpoint($endpointArns);
 //        var_dump($result);
 
-//        $topic_arn = $this->createTopic();
-        $token_6s = '5c65333fdf075cf62f72919a4b7533164d3b3e89acaf27d33c5c775bb63a42f1';
-        $end_point = $this->createPlatformEndpoint($token_6s);
-
-//        $subscribe = $this->sns_client->subscribe($topic_arn, $end_point);
-//        $this->sns_client->writeDebugLog("Subcribe Id: {$subscribe}");
+//        $this->sns_client->deleteEndpoint($end_point);
+//        $subscribes = $this->sns_client->subscribe($topicArn, $end_points);
 
 
-        $message = $this->getMessage('168 Dzo sắp ra mắt', '/sns?nmenu=1');
+//        $result = $this->sns_client->unsubscribe($subscribes);
+//        var_dump($result);
 
-        $this->sns_client->publishToEndpoint($end_point, $message);
-
-    }
-
-    private function createPlatformEndpoint($token)
-    {
-        $result =  $this->sns_client->createPlatformEndpoint($token);
-//        $this->sns_client->writeDebugLog("End point: {$result}");
-        return $result;
-    }
-
-    private function createTopic()
-    {
-        $topicName = $this->sns_client->getTopicName('demo_topic');
-        $this->sns_client->writeDebugLog("Create topic: {$topicName}");
-        $result = $this->sns_client->createTopic($topicName);
- //       $this->sns_client->writeDebugLog("Result: {$result}");
-        return $result;
+        $message = $this->getMessage('168 Dzo sắp ra mắt', '/news?nmenu=3');
+        $this->sns_client->publishToEndpoint($end_points, $message);
+//        $this->sns_client->publishToTopic($topicArn, $message);
     }
 }

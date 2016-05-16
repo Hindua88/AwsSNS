@@ -3,11 +3,11 @@ namespace Lib\Util;
 
 /* Usage:
     $log = new Logger("/tmp/log.txt", Logger::DEBUG);
-    $log->debug('debug log'); // 2016-05-13 05:29:37 - Debug --> debug log 
-    $log->info('infor log'); // 2016-05-13 05:29:37 - Info --> infor log 
-    $log->warn('warn log'); // 2016-05-13 05:29:37 - Warn --> warn log 
-    $log->error('error log'); // 2016-05-13 05:29:37 - Error --> error log 
-    $log->fatal('fatal log'); // 2016-05-13 05:29:37 - Fatal --> fatal log 
+    $log->debug('debug log'); // Output: 2016-05-13 05:29:37 - Debug --> debug log 
+    $log->info('infor log'); // Output: 2016-05-13 05:29:37 - Info --> infor log 
+    $log->warn('warn log'); // Output: 2016-05-13 05:29:37 - Warn --> warn log 
+    $log->error('error log'); // Output: 2016-05-13 05:29:37 - Error --> error log 
+    $log->fatal('fatal log'); // Output: 2016-05-13 05:29:37 - Fatal --> fatal log 
 */
 class Logger
 {

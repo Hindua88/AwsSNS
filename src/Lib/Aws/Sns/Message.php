@@ -22,7 +22,7 @@ class Message
             throw new \Exception("Platform {$this->platform} is not support!");
         }
         if (empty($message)) {
-            throw new \Exception("message is empty!");
+            throw new \Exception("Message is empty!");
         } elseif (! is_array($message)) {
             throw new \Exception("Message must be an array!");
         }
@@ -36,7 +36,12 @@ class Message
      */
     public function getData()
     {
+        $default = @$this->message['default'];
+        if (empty($default)) {
+            $default = '';
+        }
         return json_encode(array(
+            'default' => $default,
             $this->platform => json_encode($this->message)
         ));
     }
