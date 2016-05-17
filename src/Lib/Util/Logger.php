@@ -90,7 +90,7 @@ class Logger
         $this->log($line, Logger::FATAL);
     }
 
-    public function log($line, $priority)
+    private function log($line, $priority)
     {
         if ($this->priority <= $priority) {
             $status = $this->getTimeLine($priority);
@@ -98,7 +98,7 @@ class Logger
         }
     }
 
-    public function writeFreeFormLine($line)
+    private function writeFreeFormLine($line)
     {
         if ($this->log_status == Logger::LOG_OPEN && $this->priority != Logger::OFF) {
             if (fwrite($this->file_handle, $line) === false) {

@@ -14,7 +14,7 @@ class CommonHelper
         if (empty($list_ip)) {
             return $env;
         }
-        $list_ip_production = Constants::getListIPProduction();
+        $list_ip_production = Constants::getListIpAddressProduction();
         foreach ($list_ip as $ip) {
             if (in_array($ip, $list_ip_production)) {
                 $env = Constants::ENV_PRODUCT;

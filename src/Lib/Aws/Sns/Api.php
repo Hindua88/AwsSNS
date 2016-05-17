@@ -125,7 +125,7 @@ class Api
     /**
      * Execute direct API command
      */
-    public function direct()
+    private function direct()
     {
         // Set the internal pointer of an array to its first element
         $params = reset($this->params) ? reset($this->params) : array();
@@ -145,7 +145,7 @@ class Api
      *
      * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/feature-commands.html
      */
-    public function parallel()
+    private function parallel()
     {
         $commands = array();
         foreach ($this->params as $param) {

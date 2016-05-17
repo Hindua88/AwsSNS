@@ -39,7 +39,8 @@ class Constants {
 
     // Allow to check enviroment push by ip address
     const ALLOW_CHECK_IP_PRODUCTION = 1; // 0: False, 1: True
-    public static function getListIPProduction()
+    
+    public static function getListIpAddressProduction()
     { 
         return 
             array(
