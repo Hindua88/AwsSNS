@@ -61,7 +61,7 @@ class Api
      *
      * @return null
      */
-    public function setSnsclient($sns_client)
+    public function setSnsClient($sns_client)
     {
         $this->client = $sns_client;
     }

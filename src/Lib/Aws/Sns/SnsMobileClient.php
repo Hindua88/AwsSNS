@@ -218,7 +218,7 @@ class SnsMobileClient
     {
         $this->writeDebugLog("Execute " . __FUNCTION__);
         $api = new Api('listPlatformApplications');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
 
         return $api->execute();
     }
@@ -262,7 +262,7 @@ class SnsMobileClient
     {
         $this->writeDebugLog("Execute " . __FUNCTION__ . " with nextToken {$nextToken}");
         $api = new Api('listEndpointsByPlatformApplication');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         
         if ($nextToken) {
             $api->addParam([
@@ -296,7 +296,7 @@ Example: array(2) {
     {
         $this->writeDebugLog("Execute " . __FUNCTION__);
         $api = new Api('getPlatformApplicationAttributes');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         $api->addParam([
             'PlatformApplicationArn' => $this->platform_application,
         ]);
@@ -325,7 +325,7 @@ Example: array: array(2) {
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to create endpoint with token: {$token}");
         }
         $api = new Api('createPlatformEndpoint');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
 
         if (is_array($token)) {
             foreach ($token as $_token) {
@@ -361,7 +361,7 @@ Ex: array(2) {
     {
         $this->writeDebugLog("Execute " . __FUNCTION__ . " with end point {$endpointArn}");
         $api = new Api('getEndpointAttributes');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         $api->addParam([
             'EndpointArn' => $endpointArn,
         ]);
@@ -378,7 +378,7 @@ Ex: array(2) {
     {
         $this->writeDebugLog("Execute " . __FUNCTION__ . " with end point {$endpointArn}");
         $api = new Api('setEndpointAttributes');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         $api->addParam([
             'EndpointArn' => $endpointArn,
             'Attributes' => [
@@ -398,7 +398,7 @@ Ex: array(2) {
     {
         $this->writeDebugLog("Execute " . __FUNCTION__ . " with end point {$endpointArn}");
         $api = new Api('setEndpointAttributes');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         $api->addParam([
             'EndpointArn' => $endpointArn,
             'Attributes' => [
@@ -432,7 +432,7 @@ array(2) {
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete {$endpointArn} end point");
         }
         $api = new Api('deleteEndpoint');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         if (is_array($endpointArn)) {
             foreach ($endpointArn as $_endpointArn) {
                 $api->addParam([
@@ -463,7 +463,7 @@ array(2) {
 
         $this->writeDebugLog("Execute " . __FUNCTION__ . " to create topic: {$topicName}");
         $api = new Api('createTopic');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         $api->addParam([
             'Name' => $topicName,
         ]);
@@ -485,7 +485,7 @@ array(2) {
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete topic arn: {$topicArn}");
         }
         $api = new Api('deleteTopic');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         if (is_array($topicArn)) {
             foreach ($topicArn as $_topicArn) {
                 $api->addParam([
@@ -526,7 +526,7 @@ array(100) {
     {
         $this->writeDebugLog("Execute " . __FUNCTION__ . " to list topic with nextToken {$nextToken}");
         $api = new Api('listTopics');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         if ($nextToken) {
             $api->addParam([
                 'NextToken' => $nextToken,
@@ -550,7 +550,7 @@ array(100) {
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to add end point {$endpointArn} into topic {$topicArn}");
         }
         $api = new Api('subscribe');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         if (is_array($endpointArn)) {
             foreach ($endpointArn as $_endpointArn) {
                 $api->addParam([
@@ -584,7 +584,7 @@ array(100) {
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to delete {$subscriptionArn} subscribe");
         }
         $api = new Api('unsubscribe');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         if (is_array($subscriptionArn)) {
             foreach ($subscriptionArn as $_subscriptionArn) {
                 $api->addParam([
@@ -614,7 +614,7 @@ array(100) {
     {
         $this->writeDebugLog("Execute " . __FUNCTION__ . " to list subscriptions {$topicArn} topic with nextToken {$nextToken}");
         $api = new Api('listSubscriptionsByTopic');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         if ($nextToken) {
             $api->addParam([
                 'TopicArn' => $topicArn,
@@ -646,7 +646,7 @@ array(100) {
         $this->writeDebugLog("Message {$message->getData()}");
 
         $api = new Api('publish');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         $api->addParam([
             'TopicArn' => $topicArn,
             'MessageStructure' => 'json',
@@ -679,7 +679,7 @@ array(100) {
             $firstEndpoint = $endpointArn;
         }
         $api = new Api('publish');
-        $api->setSnsclient($this->sns_client);
+        $api->setSnsClient($this->sns_client);
         $arn = new Arn($firstEndpoint); 
         $message = new Message($arn->platform, $content);
         $this->writeDebugLog("Message {$message->getData()}");
