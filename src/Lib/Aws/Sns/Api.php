@@ -175,14 +175,14 @@ class Api
                 $this->parseResultData($data, $result[$index]);
             }
             if ($e->getFailedCommands()) {
-                $this->writeErrorLog("SnsMoibleClient -> Api {$this->api} (parallel): total commands " . count($commands)
+                $this->writeErrorLog("SnsMobileClient -> Api {$this->api} (parallel): total commands " . count($commands)
                     . ", fail: " . count($e->getFailedCommands()));
             }
             // Fail 
             foreach ($e->getFailedCommands() as $command) {
                 $index = array_search($command, $commands);
                 $result[$index] = $e->getExceptionForFailedCommand($command)->getMessage();
-                $this->writeErrorLog("SnsMoibleClient -> Api {$this->api} (parallel) "
+                $this->writeErrorLog("SnsMobileClient -> Api {$this->api} (parallel) "
                     . $e->getExceptionForFailedCommand($command)->getMessage());
             }
         }
