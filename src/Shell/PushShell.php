@@ -17,6 +17,7 @@ class PushShell extends Shell
     public function initialize()
     {
         parent::initialize();
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
 
         // Read config from file or database
         // Ex:  My account free aws
@@ -45,7 +46,7 @@ class PushShell extends Shell
     {
         // Example For Android
 //        $message = array(
-//            'default' => $text,
+//            'default' => $text, // required
 //            'data' => array(
 //                'message' => array(
 //                    'type' => 'info',
@@ -71,62 +72,124 @@ class PushShell extends Shell
 
     public function main()
     {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
+//        $this->testListPlatformApplications();
+//        $this->testGetTopicName();
+//        $this->testEndpoint();
+//        $this->testTopic();
+//        $this->testSubscribe();
 
-//        $result = $this->sns_client->listPlatformApplications();
-//       $result = $this->sns_client->listEndpointsByPlatformApplication();
-//        $result = $this->sns_client->getPlatformApplicationAttributes();
-//        $result = $this->sns_client->getEndpointAttributes('arn:aws:sns:ap-southeast-1:69696696969:endpoint/APNS/m90_prod/01457f51-f784-3356-b142-ebf5be0410e4');
-//        $result = $this->sns_client->listTopics();
-//        var_dump($result);
-//        $result = $this->sns_client->listTopics($result['NextToken']);
-        #$topicName = $this->sns_client->getTopicName('demo_topic');
+//        $this->testPulishToEndpoint();
+//        $this->testPulishToTopic();
+    }
 
-//        $topicName = $this->sns_client->getTopicName('demo_test');
-//        $topicArn = $this->sns_client->createTopic($topicName);
- //       $topicName = $this->sns_client->getTopicName('demo_test2');
- //       $topicArn2 = $this->sns_client->createTopic($topicName);
-
-//        $topicArns = array($topicArn, $topicArn2);
-//        var_dump($topicArns);
-//        $this->sns_client->deleteTopic($topicArns);
-
- //       $result = $this->sns_client->deleteTopic($topicArn);
-#        $this->sns_client->deleteTopic($topicArn);
-
+    private function testPulishToTopic()
+    {
+        $message = $this->getMessage('168 Dzo sắp ra mắt!', '/news?nmenu=3');
         $token_5s = '115ef84197a39ee1ece9bb9b52d6891b5ad70b35ebe1bb1c20fa78dd952343b1';
         $token_6splus = '337db0f8b98331f33dab1a2265b5937fb7fa829b05f8100af72523fa2288afce';
-
-        $tokens = $token_5s;
-
-        $token_android = array (
-            'APA91bGhmcm9bLLwUc6uT4Hg-vPuNF5t1ZIuS_zcF2wwWcno4igcmsFOohwtOaGENixt2w2M8LZhIPidEQe5OgXExGy7yogJWMdE6liUd0ePsSqI5eRHzw0',
-        );
-
-//        $tokens = array($token_5s, $token_6splus);
+        $tokens = array($token_5s, $token_6splus);
         $end_points = $this->sns_client->createPlatformEndpoint($tokens);
-//        $result = $this->sns_client->deleteEndpoint($endpointArns);
-//       $subscribes = $this->sns_client->subscribe($topicArn, $end_points);
+        $topicName = $this->sns_client->getTopicName('demo_test');
+        $topicArn = $this->sns_client->createTopic($topicName);
+        var_dump($topicArn);
+        $subscribes = $this->sns_client->subscribe($topicArn, $end_points);
+        var_dump($subscribes);
+        $result = $this->sns_client->publishToTopic($topicArn, $message);
+        var_dump($result);
+    }
+
+    private function testPulishToEndpoint()
+    {
+        $message = $this->getMessage('168 Dzô sắp ra mắt', '/news?nmenu=3');
+        $token_5s = '115ef84197a39ee1ece9bb9b52d6891b5ad70b35ebe1bb1c20fa78dd952343b1';
+        $token_6splus = '337db0f8b98331f33dab1a2265b5937fb7fa829b05f8100af72523fa2288afce';
+        $tokens = array($token_5s, $token_6splus);
+//        $tokens = $token_5s;
+        $end_points = $this->sns_client->createPlatformEndpoint($tokens);
+        $result = $this->sns_client->publishToEndpoint($end_points, $message);
+        var_dump($result);
+    }
+
+    private function testSubscribe()
+    {
+        $token_5s = '115ef84197a39ee1ece9bb9b52d6891b5ad70b35ebe1bb1c20fa78dd952343b1';
+        $token_6splus = '337db0f8b98331f33dab1a2265b5937fb7fa829b05f8100af72523fa2288afce';
+        $tokens = array($token_5s, $token_6splus);
+//        $tokens = $token_5s;
+        $end_points = $this->sns_client->createPlatformEndpoint($tokens);
+        $topicName = $this->sns_client->getTopicName('demo_test');
+        $topicArn = $this->sns_client->createTopic($topicName);
+        var_dump($topicArn);
+        $subscribes = $this->sns_client->subscribe($topicArn, $end_points);
+        var_dump($subscribes);
 //        $result = $this->sns_client->unsubscribe($subscribes);
-
-//        $this->sns_client->setEndpointEnabled($end_points);
-//        $result = $this->sns_client->getEndpointAttributes($end_points);
 //        var_dump($result);
-//        sleep(10);
-//        $this->sns_client->setEndpointDisabled($end_points);
-//        $result = $this->sns_client->getEndpointAttributes($end_points);
-//        var_dump($result);
-//        sleep(10);
-//        $this->sns_client->setEndpointEnabled($end_points);
-//        $result = $this->sns_client->getEndpointAttributes($end_points);
-//        var_dump($result);
+    }
 
+    private function testListPlatformApplications() {
+        $result = $this->sns_client->listPlatformApplications();
+        var_dump($result);
 
+       $result = $this->sns_client->listEndpointsByPlatformApplication();
+        var_dump($result);
+
+        $result = $this->sns_client->getPlatformApplicationAttributes();
+        var_dump($result);
+    }
+
+    private function testGetTopicName()
+    {
+        $result = $this->sns_client->getTopicName('demo_test');
+        var_dump($result);
+    }
+
+    private function testEndpoint()
+    {
+        $token_5s = '115ef84197a39ee1ece9bb9b52d6891b5ad70b35ebe1bb1c20fa78dd952343b1';
+        $token_6splus = '337db0f8b98331f33dab1a2265b5937fb7fa829b05f8100af72523fa2288afce';
+        // one endpoint
+        $endpointArn = $this->sns_client->createPlatformEndpoint($token_5s);
+        var_dump($endpointArn);
+        $result = $this->sns_client->deleteEndpoint($endpointArn);
+        var_dump($result);
+        // two endpoints
+        $endpointArn = $this->sns_client->createPlatformEndpoint(array($token_5s, $token_6splus));
+        var_dump($endpointArn);
+        $result = $this->sns_client->deleteEndpoint($endpointArn);
+        var_dump($result);
+        // test enable
+        $this->sns_client->setEndpointEnabled($endpointArn);
+        $result = $this->sns_client->getEndpointAttributes($endpointArn);
+        var_dump($result);
+        sleep(5);
+        // test disable
+        $this->sns_client->setEndpointDisabled($endpointArn);
+        $result = $this->sns_client->getEndpointAttributes($endpointArn);
+        var_dump($result);
+        sleep(5);
+        $this->sns_client->setEndpointEnabled($endpointArn);
+        $result = $this->sns_client->getEndpointAttributes($endpointArn);
+        var_dump($result);
         $message = $this->getMessage('168 Dzo sắp ra mắt', '/news?nmenu=3');
-//        $message = $this->getMessage('168 Dzo sắp ra mắt !', '1');
-//        $result = $this->sns_client->publishToEndpoint($end_points, $message);
-//        var_dump($result);
+//         $this->sns_client->publishToEndpoint($endpointArn, $message);
+    }
 
-//        $this->sns_client->publishToTopic($topicArn, $message);
+    private function testTopic()
+    {
+        $result = $this->sns_client->listTopics();
+        var_dump($result);
+        if (@$result['NextToken']) {
+            $result = $this->sns_client->listTopics($result['NextToken']);
+            var_dump($result);
+        }
+        $topicName = $this->sns_client->getTopicName('demo_test');
+        $topicArn = $this->sns_client->createTopic($topicName);
+        $topicName = $this->sns_client->getTopicName('demo_test2');
+        $topicArn2 = $this->sns_client->createTopic($topicName);
+
+        $topicArns = array($topicArn, $topicArn2);
+        var_dump($topicArns);
+        $result = $this->sns_client->deleteTopic($topicArns);
+        var_dump($result);
     }
 }

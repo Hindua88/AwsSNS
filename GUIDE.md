@@ -40,15 +40,5 @@ b. Đọc config từ file config
 +) Lấy process pid crontab qua lệnh "pa aux | grep *" => để chạy crontab mình ko bị dẫm chân lên nhau
 +) ...
 
-3. Implementation
 
 
-4. Test
-- createPlatformEndpoint(): tạo một endpoint, tạo nhiều endpoint
-- setEndpointEnabled(): test enable enpoint
-- setEndpointDisabled(): test disable endpoint
-- deleteEndpoint()
-- createTopic()
-
-== Checklist test library ==
-1. 

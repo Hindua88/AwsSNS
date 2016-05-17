@@ -320,7 +320,7 @@ Example: array: array(2) {
     public function createPlatformEndpoint($token = array())
     {
         if (is_array($token)) {
-            $this->writeDebugLog("Execute " . __FUNCTION__ . " to create multi endpoint with total token: " . count($token) . " end points");
+            $this->writeDebugLog("Execute " . __FUNCTION__ . " to create multi endpoint with " . count($token) . " tokens");
         } else {
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to create endpoint with token: {$token}");
         }
