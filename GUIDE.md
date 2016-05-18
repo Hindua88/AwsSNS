@@ -11,8 +11,6 @@ Thư viện Aws SNS: Amazon SNS Mobile Push Notifications
 - Thêm cơ chế debug và ghi lỗi ra file để tiện tracking
 
 
-2. Mô tả
-
 2.1 Requirment
 - Project demo này sử dụng cakephp 3.2.8
 - Sử dụng aws-sdk-php v2: http://docs.aws.amazon.com/aws-sdk-php/v2/guide/requirements.html
