@@ -43,11 +43,12 @@ b. Đọc config từ file config
 
 
 2.3. Tích hợp thư viện vào project
+
 B1. Copy thư mục Lib (chứa 2 directory: Library\Aws\Sns, Library\Util) vào thư mục source code của bạn. Example: src
 
 B2. Mở file Library\Aws\Sns\SnsMobileClient.php sửa lại đường dẫn autoload.php thư viện aws-sdk-php
-Ex: require_once ROOT . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php'; // To do: Replace ROOT directory of your project to load
-Or require_once dirname(dirname(dirname("__DIR__"))) . '/lib/util/aws/aws-autoloader.php';
+Ex: require_once ROOT . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+Or require_once path. '/lib/util/aws/aws-autoloader.php';
 
 B3. Import đường dẫn autoload của Lib\Aws\Sns\autoload.php vào nơi cần sử dụng và sửa config trong file Lib\Util\Constant.php phù hợp với project
 Ex: require_once APP . 'Library' . DIRECTORY_SEPARATOR . 'Aws' . DIRECTORY_SEPARATOR . 'Sns' . DIRECTORY_SEPARATOR . 'autoload.php';
