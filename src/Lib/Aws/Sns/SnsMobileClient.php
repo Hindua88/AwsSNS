@@ -543,31 +543,54 @@ array(100) {
      */
     public function subscribe($topicArn = '', $endpointArn = '', $protocol = 'application')
     {
+        $total_endpoint = 0;
         if (is_array($endpointArn)) {
             $total_endpoint = count($endpointArn);
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to add total end point {$total_endpoint} into topic {$topicArn}");
         } else {
             $this->writeDebugLog("Execute " . __FUNCTION__ . " to add end point {$endpointArn} into topic {$topicArn}");
+            $api = new Api('subscribe');
+            $api->setSnsClient($this->sns_client);
+            $api->addParam([
+                'TopicArn' => $topicArn,
+                'Endpoint' => $endpointArn,
+                'Protocol' => $protocol
+            ]);
+
+            return $api->execute();
         }
-        $api = new Api('subscribe');
-        $api->setSnsClient($this->sns_client);
-        if (is_array($endpointArn)) {
-            foreach ($endpointArn as $_endpointArn) {
+        if ($total_endpoint == 0) {
+            return;
+        }
+        $result = array();
+        $page_size = Constants::LIMIT_PARALLEL_API; 
+        if ($page_size > 0) {
+            $total_page = intval(ceil($total_endpoint / $page_size));  // round up to next highest integer
+        } else {
+            $total_page = 1;
+        }
+        for ($page = 1; $page <= $total_page; $page ++) {
+            $api = new Api('subscribe');
+            $api->setSnsClient($this->sns_client);
+            $endpoints = array();
+            if ($page_size > 0) {
+                $start = ($page - 1) * $page_size; 
+                $endpoints = array_slice($endpointArn, $start, $page_size);
+            } else {
+                $endpoints = $endpointArn;
+            }
+            foreach ($endpoints as $_endpointArn) {
                 $api->addParam([
                     'TopicArn' => $topicArn,
                     'Endpoint' => $_endpointArn,
                     'Protocol' => $protocol
                 ]);
             }
-        } else {
-            $api->addParam([
-                'TopicArn' => $topicArn,
-                'Endpoint' => $endpointArn,
-                'Protocol' => $protocol
-            ]);
+
+            $result = array_merge($result, $api->execute());
         }
 
-        return $api->execute();
+        return $result;
     }
 
     /*

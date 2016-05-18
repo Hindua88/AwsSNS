@@ -21,6 +21,7 @@ class Constants {
 
     // Limit number param in an api 
     const LIMIT_MAX_PARAM_API = 1000; // 0: no limit, 1000: 1000
+    const LIMIT_PARALLEL_API = 0; /// 0: no limit
 
     // LogLevel:
     //     DEBUG = 1; // Most Verbose
