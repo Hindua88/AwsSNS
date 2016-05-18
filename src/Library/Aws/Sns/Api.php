@@ -21,6 +21,7 @@ class Api
         'listEndpointsByPlatformApplication' => array('Endpoints', 'NextToken'),
         'createPlatformEndpoint' => 'EndpointArn',
         'getEndpointAttributes' => 'Attributes',
+        'getTopicAttributes' => 'Attributes',
         'setEndpointAttributes' => '',
         'deleteEndpoint' => 'EndpointArn',
         'createTopic' => 'TopicArn',

@@ -110,6 +110,44 @@ class SnsMobileClient
 
         return $result;
     }
+    
+     /*
+     * Get Topic Atrributes
+     *
+     * @param string $topicArn
+     *
+     * @return array
+     *
+Ex: array(8) {
+  ["Policy"]=>
+  string(484) "{"Version":"2008-10-17","Id":"__default_policy_ID","Statement":[{"Sid":"__default_statement_ID","Effect":"Allow","Principal":{"AWS":"*"},"Action":["SNS:GetTopicAttributes","SNS:SetTopicAttributes","SNS:AddPermission","SNS:RemovePermission","SNS:DeleteTopic","SNS:Subscribe","SNS:ListSubscriptionsByTopic","SNS:Publish","SNS:Receive"],"Resource":"arn:aws:sns:ap-southeast-1:634501430222:MY168DZO_IOS_SANDBOX_DEMO_TEST","Condition":{"StringEquals":{"AWS:SourceOwner":"634501430222"}}}]}"
+  ["Owner"]=>
+  string(12) "634501430222"
+  ["SubscriptionsPending"]=>
+  string(1) "0"
+  ["TopicArn"]=>
+  string(70) "arn:aws:sns:ap-southeast-1:634501430222:MY168DZO_IOS_SANDBOX_DEMO_TEST"
+  ["EffectiveDeliveryPolicy"]=>
+  string(227) "{"http":{"defaultHealthyRetryPolicy":{"minDelayTarget":20,"maxDelayTarget":20,"numRetries":3,"numMaxDelayRetries":0,"numNoDelayRetries":0,"numMinDelayRetries":0,"backoffFunction":"linear"},"disableSubscriptionOverrides":false}}"
+  ["SubscriptionsConfirmed"]=>
+  string(3) "941"
+  ["DisplayName"]=>
+  string(0) ""
+  ["SubscriptionsDeleted"]=>
+  string(1) "0"
+}
+     */
+    public function getTopicAttributes($topicArn = '')
+    {
+        $this->writeDebugLog("Execute " . __FUNCTION__ . " to get attributes topic: {$topicArn}");
+        $api = new Api('getTopicAttributes');
+        $api->setSnsClient($this->sns_client);
+        $api->addParam([
+            'TopicArn' => $topicArn,
+        ]);
+
+        return $api->execute();
+    }
 
     /*
      * Set debug request log
