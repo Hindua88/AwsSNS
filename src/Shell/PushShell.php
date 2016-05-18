@@ -1,7 +1,7 @@
 <?php
 namespace App\Shell;
 
-require_once APP . 'Lib' . DS . 'Aws' . DS . 'Sns' . DS . 'autoload.php';
+require_once APP . 'Library' . DS . 'Aws' . DS . 'Sns' . DS . 'autoload.php';
 
 use Cake\Console\Shell;
 use Cake\Log\Log;
@@ -72,11 +72,11 @@ class PushShell extends Shell
 
     public function main()
     {
-//        $this->testListPlatformApplications();
+        $this->testListPlatformApplications();
 //        $this->testGetTopicName();
 //        $this->testEndpoint();
 //        $this->testTopic();
-//        $this->testSubscribe();
+//         $this->testSubscribe();
 
 //        $this->testPulishToEndpoint();
 //        $this->testPulishToTopic();
@@ -101,10 +101,11 @@ class PushShell extends Shell
     private function testPulishToEndpoint()
     {
         $message = $this->getMessage('168 Dzô sắp ra mắt', '/news?nmenu=3');
-        $token_5s = '115ef84197a39ee1ece9bb9b52d6891b5ad70b35ebe1bb1c20fa78dd952343b1';
+//        $token_5s = '115ef84197a39ee1ece9bb9b52d6891b5ad70b35ebe1bb1c20fa78dd952343b1';
+        $token_5s = '5448474e434fe6cf93d2058678c124b8e6340358b9ff9529d7634656255682fb';
         $token_6splus = '337db0f8b98331f33dab1a2265b5937fb7fa829b05f8100af72523fa2288afce';
-        $tokens = array($token_5s, $token_6splus);
-//        $tokens = $token_5s;
+//        $tokens = array($token_5s, $token_6splus);
+        $tokens = $token_5s;
         $end_points = $this->sns_client->createPlatformEndpoint($tokens);
         $result = $this->sns_client->publishToEndpoint($end_points, $message);
         var_dump($result);
@@ -115,13 +116,28 @@ class PushShell extends Shell
         $token_5s = '115ef84197a39ee1ece9bb9b52d6891b5ad70b35ebe1bb1c20fa78dd952343b1';
         $token_6splus = '337db0f8b98331f33dab1a2265b5937fb7fa829b05f8100af72523fa2288afce';
         $tokens = array($token_5s, $token_6splus);
-//        $tokens = $token_5s;
+
+        $this->loadModel('User');
+        $tokens = $this->User->getTokens(100, 1);
+//        var_dump($tokens);
+//        var_dump("Total token: " . count($tokens));
+
+        $tokens = $token_5s;
+        $start_time = time();
         $end_points = $this->sns_client->createPlatformEndpoint($tokens);
+        $total_time = time() - $start_time;
+        var_dump("Total time create end point: {$total_time}");
+
         $topicName = $this->sns_client->getTopicName('demo_test');
         $topicArn = $this->sns_client->createTopic($topicName);
         var_dump($topicArn);
+
+        $start_time = time();
         $subscribes = $this->sns_client->subscribe($topicArn, $end_points);
+        $total_time = time() - $start_time;
+        var_dump("Total time subscribe end point: {$total_time}");
         var_dump($subscribes);
+
 //        $result = $this->sns_client->unsubscribe($subscribes);
 //        var_dump($result);
     }

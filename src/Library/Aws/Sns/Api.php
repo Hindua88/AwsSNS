@@ -1,7 +1,7 @@
 <?php
 namespace Lib\Aws\Sns;
 
-require_once dirname(dirname(__DIR__)) . DS . 'Util' . DS . 'autoload.php';
+require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'Util' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 use Guzzle\Service\Exception\CommandTransferException;
 use Lib\Util\Constants as Constants;

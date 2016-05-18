@@ -9,9 +9,9 @@ spl_autoload_register(function ($className) {
     }
 
     // Get name file
-    $classPath = str_replace('Lib\\Util\\', '', $className) . '.php';
+    $classPath = str_replace('Lib\\Aws\\Sns\\', '', $className) . '.php';
 
-    if (file_exists(__DIR__ . DS . $classPath)) {
-        require(__DIR__ . DS . $classPath);
+    if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . $classPath)) {
+        require(__DIR__ . DIRECTORY_SEPARATOR . $classPath);
     }
 });
