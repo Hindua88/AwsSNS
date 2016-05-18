@@ -11,7 +11,6 @@ Thư viện Aws SNS: Amazon SNS Mobile Push Notifications
 - Thêm cơ chế debug và ghi lỗi ra file để tiện tracking
 
 
-
 2. Mô tả
 
 2.1 Requirment
@@ -59,6 +58,8 @@ Or require_once path. '/lib/util/aws/aws-autoloader.php';
 B3. Import đường dẫn autoload của Lib\Aws\Sns\autoload.php vào nơi cần sử dụng và sửa config trong file Lib\Util\Constant.php phù hợp với project
 Ex: require_once APP . 'Library' . DIRECTORY_SEPARATOR . 'Aws' . DIRECTORY_SEPARATOR . 'Sns' . DIRECTORY_SEPARATOR . 'autoload.php';
 Ex crontab: src/Shell/PushShell.php
+
+Note: Để disable verify ssl khi chạy api parallel ta truy cập file: ../Vendor/aws/guzzle/guzzle/src/Guzzle/Http/Client.php. Comment dòng 76 $this->initSsl(); hàm __construct()
 
 
 
