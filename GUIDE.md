@@ -1,9 +1,13 @@
 Thư viện Aws SNS: Amazon SNS Mobile Push Notifications
 
-1. Mục đích: 
+1. Mục đích:
+ 
 - Tạo ra thư viện chung có thể sử dụng cho nhiều dự án
+
 - Thêm cơ chế tránh push nhầm giữa các môi trường theo IP Address
+
 - Thêm cơ chế ghi log request, response api
+
 - Thêm cơ chế debug và ghi lỗi ra file để tiện tracking
 
 2. Mô tả
