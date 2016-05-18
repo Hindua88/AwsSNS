@@ -1,4 +1,5 @@
 Thư viện Aws SNS: Amazon SNS Mobile Push Notifications
+
 1. Mục đích: 
 - Tạo ra thư viện chung có thể sử dụng cho nhiều dự án
 - Thêm cơ chế tránh push nhầm giữa các môi trường theo IP Address
@@ -46,7 +47,7 @@ B1. Copy thư mục Lib (chứa 2 directory: Library\Aws\Sns, Library\Util) vào
 
 B2. Mở file Library\Aws\Sns\SnsMobileClient.php sửa lại đường dẫn autoload.php thư viện aws-sdk-php
 Ex: require_once ROOT . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php'; // To do: Replace ROOT directory of your project to load
-Or require_once dirname(dirname(dirname(__DIR__))) . '/lib/util/aws/aws-autoloader.php';
+Or require_once dirname(dirname(dirname("__DIR__"))) . '/lib/util/aws/aws-autoloader.php';
 
 B3. Import đường dẫn autoload của Lib\Aws\Sns\autoload.php vào nơi cần sử dụng và sửa config trong file Lib\Util\Constant.php phù hợp với project
 Ex: require_once APP . 'Library' . DIRECTORY_SEPARATOR . 'Aws' . DIRECTORY_SEPARATOR . 'Sns' . DIRECTORY_SEPARATOR . 'autoload.php';
